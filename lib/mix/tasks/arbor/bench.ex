@@ -31,7 +31,7 @@ defmodule Mix.Tasks.Arbor.Bench do
       IO.puts "Running #{func}"
       times = bench(nodes, runs, func)
       total = Enum.sum(times)
-      IO.puts "\t#{runs} runs"
+      IO.puts "\t#{runs} queries"
       IO.puts "\tTotal time: #{total}"
       IO.puts "\tAvg: #{total/runs}"
     end)

@@ -14,6 +14,8 @@ defmodule Mix.Tasks.Arbor.Seed do
                                       strict: switches,
                                       aliases: aliases)
     opts = Keyword.merge(defaults, opts)
+    IO.puts "Running w/:"
+    IO.inspect(opts)
 
     # Truncate to get the SERIALs reset, this will make it easier to build
     # child nodes, because we can guarantee IDs to randomly pick w/o doing a

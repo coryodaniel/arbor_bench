@@ -40,7 +40,8 @@ defmodule ArborBench.Mixfile do
     [
       {:ecto, ">= 2.0.0"},
       {:postgrex, ">= 0.0.0"},
-      {:arbor, "~> 1.0.0"}
+      {:arbor, path: "../arbor/"}
+      # {:arbor, "~> 1.0.0"}
     ]
   end
 end

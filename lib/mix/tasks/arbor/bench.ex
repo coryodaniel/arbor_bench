@@ -9,21 +9,22 @@ defmodule Mix.Tasks.Arbor.Bench do
     start_repos(args)
     usage
     {opts, _, _} = OptionParser.parse(args,
-                                      strict: [func: :string, runs: :integer, nodes: :integer])
+                                      strict: [func: :string, runs: :integer, size: :integer])
 
     opts = Keyword.merge(defaults, opts)
+    IO.puts "Running w/:"
+    IO.inspect(opts)
 
     query = from(
       n in Node,
       where: not is_nil(n.parent_id),
-      limit: ^opts[:nodes],
+      limit: ^opts[:size],
       order_by: fragment("RANDOM()")
     )
 
     runs = opts[:runs]
     nodes = Repo.all(query)
 
-    #IO.inspect bench_ancestors(nodes, runs)
     opts[:func]
     |> String.split(",")
     |> Enum.each(fn(func) ->
@@ -44,14 +45,18 @@ defmodule Mix.Tasks.Arbor.Bench do
     end)
     |> Enum.take(runs)
     |> Enum.map(fn(query) ->
+      # {q, arg_list} = Ecto.Adapters.SQL.to_sql(:all, Repo, query)
+      # IO.puts q
+      # IO.inspect arg_list
       t = time(fn -> Repo.all(query) end)
-      IO.puts t
+      # IO.write "."
+      # IO.puts t
       t
     end)
   end
 
   defp usage do
-    IO.puts "Usage:\n\tmix arbor.bench --func=siblings,children,descendants,ancestors --runs=NUM_QUERIES_TO_RUN --nodes=NUM_NODES_AS_TEST_SUBJECT"
+    IO.puts "Usage:\n\tmix arbor.bench --func=siblings,children,descendants,ancestors --runs=NUM_QUERIES_TO_RUN --size=SIZE_OF_SAMPLE"
   end
 
   def time(func) do
@@ -62,7 +67,7 @@ defmodule Mix.Tasks.Arbor.Bench do
   end
 
   def defaults do
-    [runs: 1_000, nodes: 10, func: "siblings,children,descendants,ancestors"]
+    [runs: 1_000, size: 100, func: "siblings,children,descendants,ancestors"]
   end
 
   def pmap(collection, func) do
